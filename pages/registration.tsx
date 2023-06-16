@@ -30,7 +30,7 @@ const RegistrationForm = ({ DJANGOURL }: Props) => {
     e.preventDefault();
     console.log(formData);
     try {
-      const paylo = JSON.stringify(formData);
+      // const paylo = JSON.stringify(formData);
     const customConfig = {
     headers: {
     'Content-Type': 'application/json'
@@ -42,6 +42,7 @@ const RegistrationForm = ({ DJANGOURL }: Props) => {
     } catch (e) {
       console.log(e);
     }
+    router.push("/")
   };
 
   return (

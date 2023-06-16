@@ -15,7 +15,9 @@ import {
   Button,
   IconButton,
   Input,
-  Checkbox,Select, Option 
+  Checkbox,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import React, { FormEvent, FormEventHandler, useState } from "react";
 // import { getServerSideProps } from "./auth/signin";
@@ -25,7 +27,7 @@ interface Reservas {
   id: number;
   fecha: string;
   costo: string;
-  descuento: string;
+  descuento: number;
   evento: {
     id: number;
     nombre: string;
@@ -34,9 +36,9 @@ interface Reservas {
     catering: boolean;
   };
   lugar: string;
-  cantidadInvitados: string;
-  cantidadMesas: string;
-  cantidadPersonal: string;
+  cantidadInvitados: number;
+  cantidadMesas: number;
+  cantidadPersonal: number;
   pago: {
     tipoPago: string;
     fechaInicial: string;
@@ -68,22 +70,22 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
   const [open, setOpen] = useState(false);
   const openDrawer = () => setOpen(true);
   const closeDrawer = () => {
-    setOpen(false)
-    setAdder(false)
-  }
-  const [adder,setAdder] = useState(false)
+    setOpen(false);
+    setAdder(false);
+  };
+  const [adder, setAdder] = useState(false);
   const [con, setCon] = useState<Reservas>({
-      fecha: "",
-      costo: "",
-      lugar: "",
-      cantidadInvitados: "0",
-      cantidadMesas: "0",
-      cantidadPersonal: "0",
-      id: 0,
-      descuento: "0",
-      pago: [],
-      evento: { id: 0, nombre: "", img: "", descripcion: "", catering: false },
-    });
+    fecha: "",
+    costo: "",
+    lugar: "",
+    cantidadInvitados: 0,
+    cantidadMesas: 0,
+    cantidadPersonal: 0,
+    id: 0,
+    descuento: 0,
+    pago: [],
+    evento: { id: 0, nombre: "", img: "", descripcion: "", catering: false },
+  });
 
   const Clicker = (param: Reservas) => {
     openDrawer();
@@ -97,30 +99,48 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
       fecha: "",
       costo: "",
       lugar: "",
-      cantidadInvitados: "0",
-      cantidadMesas: "0",
-      cantidadPersonal: "0",
+      cantidadInvitados: 0,
+      cantidadMesas: 0,
+      cantidadPersonal: 0,
       id: 0,
-      descuento: "0",
+      descuento: 0,
       pago: [],
       evento: { id: 0, nombre: "", img: "", descripcion: "", catering: false },
     });
-    setAdder(true)
+    setAdder(true);
   };
 
   const Mandar = (event: FormEventHandler<HTMLButtonElement>) => {
     console.log(event);
   };
-  const handleChange = (target:string,value:string,helper=false) => {
+  const handleChange = (target: string, value: any, helper = false) => {
     setCon({
       ...con,
-      [target]:helper?eventos.filter(ele=> ele.nombre == value)[0]:value,
+      [target]: helper
+        ? eventos.filter((ele) => ele.nombre == value)[0]
+        : value,
     });
     // console.log(e.target)
   };
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(e);
+    try {
+      // const paylo = JSON.stringify(formData);
+      const customConfig = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const res = await axios.post(
+        DJANGOURL + "/logic/reservar/",
+        con,
+        customConfig
+      );
+    } catch (e) {
+      console.log(e);
+    }
+
     //     try{
     // const res = await fetch(DJANGOURL+"/api/auth/register/", {
     //     method: 'POST',
@@ -132,7 +152,6 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
     // catch(e){
     //   console.log(e)
     // }
- 
   };
 
   return (
@@ -192,8 +211,13 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
                   }`}
                 >
                   <Input size="lg" label="fecha" value={con.fecha} />
-                  <Input size="lg" label="costo" name="costo" value={con.costo} />
-                  <Input size="lg" label="lugar" value={con.lugar}  />
+                  <Input
+                    size="lg"
+                    label="costo"
+                    name="costo"
+                    value={con.costo}
+                  />
+                  <Input size="lg" label="lugar" value={con.lugar} />
                   <Input
                     size="lg"
                     label="Tipo Evento"
@@ -226,34 +250,67 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
                 onSubmit={handleSubmit}
               >
                 <div className={`mb-4 flex flex-col gap-6 `}>
-                  <Input size="lg" label="fecha" value={con.fecha}  onChange={e=>handleChange("fecha",e.target.value)} />
-                  <Input size="lg" label="costo" value={con.costo} onChange={e=>handleChange("costo",e.target.value)} />
-                  <Input size="lg" label="lugar" value={con.lugar} onChange={e=>handleChange("lugar",e.target.value)} />
+                  <Input
+                    size="lg"
+                    label="fecha"
+                    value={con.fecha}
+                    onChange={(e) => handleChange("fecha", e.target.value)}
+                  />
+                  <Input
+                    size="lg"
+                    label="costo"
+                    value={con.costo}
+                    onChange={(e) =>
+                      handleChange("costo", parseFloat(e.target.value))
+                    }
+                  />
+                  <Input
+                    size="lg"
+                    label="lugar"
+                    value={con.lugar}
+                    onChange={(e) => handleChange("lugar", e.target.value)}
+                  />
                   {/* <Input */}
                   {/*   size="lg" */}
                   {/*   label="Tipo Evento" */}
                   {/*   onChange={e=>handleChange("lugar",e.target.value)} */}
                   {/* /> */}
-                  <Select label="Tipo de Evento" onChange={(e)=>{handleChange("evento",e!!,true)}} >
-                    { eventos.map(ele=><Option value={ele.nombre}>{ele.nombre}</Option>) }
-      </Select>
+                  <Select
+                    label="Tipo de Evento"
+                    onChange={(e) => {
+                      handleChange("evento", e!!, true);
+                    }}
+                  >
+                    {eventos.map((ele) => (
+                      <Option value={ele.nombre}>{ele.nombre}</Option>
+                    ))}
+                  </Select>
                   <Input
                     size="lg"
                     label="Cantidad Invitados"
                     value={con.cantidadInvitados}
-                    onChange={e=>handleChange("cantidadInvitados",e.target.value)}
+                    onChange={(e) =>
+                      handleChange(
+                        "cantidadInvitados",
+                        parseInt(e.target.value)
+                      )
+                    }
                   />
                   <Input
                     size="lg"
                     label="Cantidad Personal"
                     value={con.cantidadPersonal}
-                    onChange={e=>handleChange("cantidadPersonal",e.target.value)}
+                    onChange={(e) =>
+                      handleChange("cantidadPersonal", parseInt(e.target.value))
+                    }
                   />
                   <Input
                     size="lg"
                     label="Cantidad Mesas"
                     value={con.cantidadMesas}
-                    onChange={e=>handleChange("cantidadMesas",e.target.value)}
+                    onChange={(e) =>
+                      handleChange("cantidadMesas", parseInt(e.target.value))
+                    }
                   />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
@@ -293,7 +350,7 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
         </List>
       </Card>
       <Button color="green" onClick={() => Adder()}>
-        color green
+        Agregar
       </Button>
     </div>
   );
@@ -306,11 +363,11 @@ type Params = {
 };
 
 export async function getServerSideProps(context: any) {
-          let data;
-        try {
-          data = await axios.get(process.env.DJANGOURL + "/logic/eventos/");
+  let data;
+  try {
+    data = await axios.get(process.env.DJANGOURL + "/logic/eventos/");
   } catch (error) {
-          data = { data: {} };
+    data = { data: {} };
   }
   const session = await getServerSession(context.req, context.res, authOptions);
   console.log(session);
@@ -321,12 +378,9 @@ export async function getServerSideProps(context: any) {
       Authorization: `Bearer ${session.user.accessToken}`,
     };
 
-    const content = await axios.get(
-      process.env.DJANGOURL + "/logic/content/",
-      {
-        headers,
-      }
-    );
+    const content = await axios.get(process.env.DJANGOURL + "/logic/content/", {
+      headers,
+    });
     console.log(content.data);
     return {
       props: {
