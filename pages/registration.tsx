@@ -1,21 +1,22 @@
-import { useRouter } from "next/router"
-import React, { useState } from 'react';
+import axios from "axios";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
 type Props = {
-  DJANGOURL:string
+  DJANGOURL: string;
 };
 
-const RegistrationForm = ({DJANGOURL}:Props) => {
+const RegistrationForm = ({ DJANGOURL }: Props) => {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password1: '',
-    password2: '',
-    razonSocial: '',
-    dni: '',
-    direccion: '',
-    telefono: '',
-    genero: '',
+    username: "",
+    email: "",
+    password1: "",
+    password2: "",
+    razonSocial: "",
+    dni: "",
+    direccion: "",
+    telefono: "",
+    genero: "",
   });
   // console.log(DJANGOURL)
   const handleChange = (e) => {
@@ -24,26 +25,23 @@ const RegistrationForm = ({DJANGOURL}:Props) => {
       [e.target.name]: e.target.value,
     });
   };
-    const router = useRouter()
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    try{
-        const headers = {'Content-Type':'application/json',
-                    'Access-Control-Allow-Origin':'*',
-                    'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'}
-const res = await fetch(DJANGOURL+"/api/auth/register/", {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: headers
-      })
-      router.push('/')
+    try {
+      const paylo = JSON.stringify(formData);
+    const customConfig = {
+    headers: {
+    'Content-Type': 'application/json'
     }
-    catch(e){
-      console.log(e)
+};
+      const res = await axios.post(DJANGOURL + "/api/auth/register/", 
+        formData,customConfig
+      );
+    } catch (e) {
+      console.log(e);
     }
-      
-
   };
 
   return (
@@ -180,19 +178,17 @@ const res = await fetch(DJANGOURL+"/api/auth/register/", {
   );
 };
 
-export default RegistrationForm
+export default RegistrationForm;
 type Params = {
   params: {
     slug: string;
   };
 };
 
-
 export async function getStaticProps({ params }: Params) {
-
   return {
     props: {
-      DJANGOURL:process.env.DJANGOURL
+      DJANGOURL: process.env.DJANGOURL,
     },
   };
 }

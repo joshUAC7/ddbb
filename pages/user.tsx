@@ -309,6 +309,7 @@ export async function getServerSideProps(context: any) {
       "Content-type": "application/json",
       Authorization: `Bearer ${session.user.accessToken}`,
     };
+
     const content = await axios.get(
       process.env.DJANGOURL + "/logic/content/",
       {
