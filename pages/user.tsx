@@ -66,6 +66,7 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
   const { data, status } = useSession();
   // const content = await axios.get(DJANGOURL+ "/logic/content/")
   // console.log(content)
+    console.log(data)
 
   const [open, setOpen] = useState(false);
   const openDrawer = () => setOpen(true);
@@ -129,7 +130,8 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
       // const paylo = JSON.stringify(formData);
       const customConfig = {
         headers: {
-          "Content-Type": "application/json",
+      "Content-type": "application/json",
+      Authorization: `Bearer ${data!.user.accessToken}`,
         },
       };
       const res = await axios.post(
