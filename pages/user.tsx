@@ -66,7 +66,7 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
   const { data, status } = useSession();
   // const content = await axios.get(DJANGOURL+ "/logic/content/")
   // console.log(content)
-    console.log(data)
+    console.log(content)
 
   const [open, setOpen] = useState(false);
   const openDrawer = () => setOpen(true);
