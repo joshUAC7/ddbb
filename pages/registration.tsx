@@ -29,10 +29,13 @@ const RegistrationForm = ({DJANGOURL}:Props) => {
     e.preventDefault();
     console.log(formData);
     try{
+        const headers = {'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin':'*',
+                    'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'}
 const res = await fetch(DJANGOURL+"/api/auth/register/", {
         method: 'POST',
         body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" }
+        headers: headers
       })
       router.push('/')
     }

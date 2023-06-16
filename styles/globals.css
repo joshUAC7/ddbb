@@ -13,3 +13,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.myRule{
+  pointer-events: none;
+}
