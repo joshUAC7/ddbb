@@ -72,7 +72,18 @@ export default function HomeUser({ content, eventos, DJANGOURL }: Props) {
     setAdder(false)
   }
   const [adder,setAdder] = useState(false)
-  const [con, setCon] = useState<Reservas>(content.Reservas[0]);
+  const [con, setCon] = useState<Reservas>({
+      fecha: "",
+      costo: "",
+      lugar: "",
+      cantidadInvitados: "0",
+      cantidadMesas: "0",
+      cantidadPersonal: "0",
+      id: 0,
+      descuento: "0",
+      pago: [],
+      evento: { id: 0, nombre: "", img: "", descripcion: "", catering: false },
+    });
 
   const Clicker = (param: Reservas) => {
     openDrawer();
